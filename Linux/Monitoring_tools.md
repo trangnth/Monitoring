@@ -33,11 +33,32 @@ KiB Swap:  1046524 total,  1043444 free,     3080 used.   172428 avail Mem
     21 root       0 -20       0      0      0 S  0.0  0.0   0:00.00 ata_sff 
 ```
 
+Ấn phím 1 để hiển thị thông số trên từng CPU, nếu gộp lại thì nó sẽ lấy trung bình công của từng thông số
+
+```sh
+top - 14:36:51 up  2:58,  1 user,  load average: 0.00, 0.00, 0.00
+Tasks: 122 total,   1 running, 121 sleeping,   0 stopped,   0 zombie
+%Cpu0  :  0.0 us,  0.0 sy,  0.0 ni,100.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu1  :  0.7 us,  0.3 sy,  0.0 ni, 99.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  1949392 total,  1271020 free,   309352 used,   369020 buff/cache
+KiB Swap:  1044476 total,  1044476 free,        0 used.  1398388 avail Mem
+```
+
+
 **Dòng đầu tiên**: thể hiện thời gian máy uptime, số user đang đăng nhập, tải trung bình của hệ thống. Ba thông số của load average lần lượt chỉ khối lượng trung bình hệ thống phải xử lý trong khoảng thời gian 1p, 5p và 15p.
 
 **Dòng 2**: thể hiện tổng số tiến trình, số tiến trình đang chạy, số tiến trình đang chờ, số tiến trình đã dừng, số tiến trình đang chờ dừng (zombie)
 
-**Dòng 3**: Phần trăm CPU sử dụng cho người dùng (%us), Phần trăm CPU sử dụng cho hệ thống (%sy), Phần trăm CPU sử dụng cho tiến trình update (%ni), Phần trăm CPU không sử dụng (%id), Phần trăm CPU đợi các tiến trình I/O của hệ thống (wa%), Phần trăm CPU sử dụng giao tiếp với phần cứng (%hi), Phần trăm CPU sử dụng giao tiếp với phần mềm (%si)
+**Dòng 3**: 
+
+* Phần trăm CPU sử dụng cho người dùng khi khởi tạo tiến trình (%us)
+* Phần trăm CPU sử dụng cho hệ thống (tạo bởi kernel) (%sy)
+* Phần trăm CPU sử dụng cho tiến trình update (%ni)
+* Phần trăm CPU bị chiếm dụng khi cpu không sử dụng, đang trong trạng thái chờ (idle) ở thời điểm không có I/O request (%id)
+* Phần trăm chiếm dụng CPU khi cpu đang trong trạng thái idle ở thời điểm phát sinh I/O request (wa%)
+* Phần trăm CPU sử dụng xử lý gián đoạn phần cứng (%hi)
+* Phần trăm CPU sử dụng xử lý gián đoạn phần mềm (%si)
+* Phần trăm do máy ảo sử dụng (%st)
 
 **Dòng 4,5** thể hiện mức độ sử dụng RAM và swap
 
@@ -51,10 +72,20 @@ Bên dưới là bảng các tiến trình với các thông số:
 * RES: Bộ nhớ vật lý dùng cho tiến trình
 * SHARE Amount of memory shared with other processes, in kilobytes
 * STAT State of the process: S=sleeping, R=running, T=stopped or traced, D=interruptible sleep, Z=zombie.
-* %CPU: Phần trăm CPU sử dụng cho tiến trình
-* %MEM: Phần trăm bộ nhớ sử dụng cho tiến trình
-* TIME: Tổng thời gian hoạt động của tiến trình
-* COMMAND: Tên của tiến trình
+* %CPU: Phần trăm CPU sử dụng cho tiến trình (Trong lần cập nhật cuối - không phải thời gian thực)
+* %MEM: Phần trăm bộ nhớ sử dụng cho tiến trình (Trong lần cập nhật cuối - không phải thời gian thực)
+* TIME: Tổng thời gian hoạt động của tiến trình (kể cả tiến trình con)
+* COMMAND: Tên của tiến trình hoặc đường dẫn đến leenhje để khởi động tiến trình đó
+
+#### Load average
+
+Load average gồm 3 con số thể hiện trong 3 khoảng thời gian khác nhau: trong 1, 5, 15 phút. Giá trị của Load average phụ thuộc vào spps core của CPU:
+
+|Số lượng core| Giá trị Load average lớn nhất |
+|--|--|
+| 1 core | 1.00|
+| 2 core | 2.00|
+| 8 core | 8.00|
 
 
 ## vmstat
@@ -159,6 +190,17 @@ Trong ví dụ trên thì `total = used + free + buff/cache`
 
 Sử dụng các tùy chọn `-b`, `-k`, `-m`, `-g` để hiện thị các giá trị dạng bytes, kilobytes, megabytes, and gigabytes
 
+* used: dung lượng ram đã dùng
+* free: dung lượng ram còn trống
+* cached và buffers: Cả Cached và Buffers đều có ý nghĩa là vùng lưu trữ tạm, nhưng mục đích sử dụng thì khác nhau, tổng quan thì có một số điểm sau:
+
+    * Mục đích của cached là tạo ra một vùng nhớ tốc độ cao nhằm tăng tốc quá trình đọc/ghi file ra đĩa, trong khi buffers là tạo ra 1 vùng nhớ tạm có tốc độ bình thường, mục đích để gom data hoặc giữ data để dùng cho mục đích nào đó.
+    * Cached được tạo từ static RAM (SRAM) nên nhanh hơn dynamic RAM (DRAM) dùng để tạo ra buffers.
+    * Buffers thường dùng cho các tiến trình input/output, trong khi cached chủ yếu được dùng cho các tiến trình đọc/ghi file ra đĩa
+    * Cached có thể là một phần của đĩa (đĩa có tốc độ cao) hoặc RAM trong khi buffers chỉ là một phần của RAM (không thể dùng đĩa để tạo ra buffers)
+* shared: Đây là bộ nhớ chia sẻ giữa các tiến trình, bộ nhớ đang được sử dụng như các bộ đệm (lưu trữ tạm thời) bởi hạt nhân
+* Swap Space: được sử dụng khi dung lượng bộ nhớ vật lý (RAM) đầy. Nếu hệ thống cần nhiều tài nguyên bộ nhớ hơn và bộ nhớ RAM đầy
+
 ## iostat
 
 Command này hiển thị CPU times trung bình kể từ khi hệ thống bắt đầu hoạt động (giống với uptime). Nó cũng tạo ra một báo cáo về các hoạt động của disk subsystem trên server trong hai phần: CPU utilization and device (disk) utilization. 
@@ -227,6 +269,19 @@ vda1              0.00     0.00    0.00    0.00     0.01     0.00    33.16     0
 
 Với `sar1` và `sar2`, hệ thống có thể được cấu hình để lấy thông tin và log của nó để phân tích sau.
 
+Ví dụ đưa ra thông kê hệ thống 3 lần mỗi giây:
+
+```sh
+root@trang-20-51:~# sar 1 3
+Linux 4.4.0-87-generic (trang-20-51)    10/02/2018  _x86_64_    (2 CPU)
+
+11:38:54 AM     CPU     %user     %nice   %system   %iowait    %steal     %idle
+11:38:55 AM     all      0.50      0.00      0.00      9.55      0.00     89.95
+11:38:56 AM     all      0.00      0.00      0.50      9.45      0.00     90.05
+11:38:57 AM     all      0.50      0.00      0.50      0.00      0.00     99.00
+Average:        all      0.33      0.00      0.33      6.33      0.00     93.00
+```
+
 Để có thể thực hiện điều này ta thêm dòng vào file `/etc/crontab`. Nhớ rằng việc cron mặc định chạy `sar` hàng ngày được thiết lập tự động sau khi cài đặt sar trên hệ thống của bạn.
 
 Vì dụ báo cáo log tự động với cron:
@@ -244,6 +299,12 @@ Vì dụ báo cáo log tự động với cron:
 
 Raw data của `sar` tool được lưu trữ ở `/var/log/sa` nơi có các file đại diện cho các ngày của tháng tương ứng.
 
+### CPU Usage of ALL CPUs (sar -u)
+
+This gives the cumulative real-time CPU usage of all CPUs. “3 10” reports for every 3 seconds a total of 10 times. Most likely you’ll focus on the last field “%idle” to see the cpu load.
+
+Displays real time CPU usage every 3 second for 10 times:
+
 ```sh
 root@trang-20-51:/var/log/sysstat# sar -u 3 10
 Linux 4.4.0-87-generic (trang-20-51)    10/02/2018  _x86_64_    (2 CPU)
@@ -254,9 +315,137 @@ Linux 4.4.0-87-generic (trang-20-51)    10/02/2018  _x86_64_    (2 CPU)
 08:13:16 AM     all      0.00      0.00      0.17      2.35      0.00     97.48
 08:13:19 AM     all      0.33      0.00      0.17      0.00      0.00     99.50
 08:13:22 AM     all      0.17      0.00      0.00      0.67      0.00     99.16
-
+...
 Average:        all      0.17      0.00      0.10      0.70      0.00     99.03
 ```
+
+Một vài các command hay dùng với sar:
+
+* `sar -u` Displays CPU usage for the current day that was collected until that point.
+* `sar -u 1 3` Displays real time CPU usage every 1 second for 3 times.
+* `sar -u ALL` Same as “sar -u” but displays additional fields.
+* `sar -u ALL` 1 3 Same as “sar -u 1 3” but displays additional fields.
+* `sar -u -f /var/log/sa/sa10` Displays CPU usage for the 10day of the month from the sa10 file.
+
+### CPU Usage of Individual CPU or Core
+
+If you have 4 Cores on the machine and would like to see what the individual cores are doing, do the following.
+
+“-P ALL” indicates that it should displays statistics for ALL the individual Cores.
+
+In the following example under “CPU” column 0, 1, 2, and 3 indicates the corresponding CPU core numbers.
+
+```sh
+root@trang-20-51:~# sar -P ALL 1 1
+Linux 4.4.0-87-generic (trang-20-51)    10/02/2018  _x86_64_    (2 CPU)
+
+11:50:27 AM     CPU     %user     %nice   %system   %iowait    %steal     %idle
+11:50:28 AM     all      0.00      0.00      0.00      0.00      0.00    100.00
+11:50:28 AM       0      0.99      0.00      0.00      0.00      0.00     99.01
+11:50:28 AM       1      0.00      0.00      0.00      0.00      0.00    100.00
+
+Average:        CPU     %user     %nice   %system   %iowait    %steal     %idle
+Average:        all      0.00      0.00      0.00      0.00      0.00    100.00
+Average:          0      0.99      0.00      0.00      0.00      0.00     99.01
+Average:          1      0.00      0.00      0.00      0.00      0.00    100.00
+```
+
+
+
+### Memory Free and Used (sar -r)
+
+This reports the memory statistics. “1 3” reports for every 1 seconds a total of 3 times. Most likely you’ll focus on “kbmemfree” and “kbmemused” for free and used memory.
+
+```sh
+root@trang-20-51:~# sar -r 1 3
+Linux 4.4.0-87-generic (trang-20-51)    10/02/2018  _x86_64_    (2 CPU)
+
+11:46:15 AM kbmemfree kbmemused  %memused kbbuffers  kbcached  kbcommit   %commit  kbactive   kbinact   kbdirty
+11:46:16 AM   1418504    530888     27.23     23144    290864    622056     20.78    240504    224832         4
+11:46:17 AM   1418504    530888     27.23     23144    290864    622056     20.78    240512    224832         4
+11:46:18 AM   1418504    530888     27.23     23144    290864    622056     20.78    240508    224832         4
+Average:      1418504    530888     27.23     23144    290864    622056     20.78    240508    224832         4
+```
+
+Dưới đây là một vài các command:
+
+    sar -r
+    sar -r 1 3
+    sar -r -f /var/log/sa/sa10
+
+###  Swap Space Used (sar -S)
+
+Báo cáo về việc thống kê swap, nếu “kbswpused” và “%swpused” bằng 0 thì hệ thống của bạn không swapping
+
+```sh
+root@trang-20-51:~# sar -S 1 3
+Linux 4.4.0-87-generic (trang-20-51)    10/02/2018  _x86_64_    (2 CPU)
+
+01:36:49 PM kbswpfree kbswpused  %swpused  kbswpcad   %swpcad
+01:36:50 PM   1044476         0      0.00         0      0.00
+01:36:51 PM   1044476         0      0.00         0      0.00
+01:36:52 PM   1044476         0      0.00         0      0.00
+Average:      1044476         0      0.00         0      0.00
+```
+
+Một vài command:
+
+    sar -S
+    sar -S 1 3
+    sar -S -f /var/log/sa/sa10
+
+### Report network statistics (sar -n)
+Báo cáo thống kê về network như: Số lượng packet nhận được(hay transmitted) qua card mạng, statistics of packet failure,...
+
+    sar -n KEYWORD
+
+`KEYWORD` có thể là một trong những thứ sau:
+
+* DEV – Displays network devices vital statistics for eth0, eth1, etc.,
+* EDEV – Display network device failure statistics
+* NFS – Displays NFS client activities
+* NFSD – Displays NFS server activities
+* SOCK – Displays sockets in use for IPv4
+* IP – Displays IPv4 network traffic
+* EIP – Displays IPv4 network errors
+* ICDEV – Displays network devices vital statistics for eth0, eth1, etc.,
+* EDEV – Display network device failure statistics
+* NFS – Displays NFS client activities
+* NFSD – Displays NFS server activities
+* SOCK – Displays sockets in use for IPv4
+* IP – Displays IPv4 network traffic
+* EIP – Displays IPv4 network errors
+* ICMP – Displays ICMPv4 network traffic
+* EICMP – Displays ICMPv4 network errors
+* TCP – Displays TCPv4 network traffic
+* ETCP – Displays TCPv4 network errors
+* UDP – Displays UDPv4 network traffic
+* SOCK6, IP6, EIP6, ICMP6, UDP6 are for IPv6
+* ALL – This displays all of the above information. The output will be very long.MP – Displays ICMPv4 network traffic
+* EICMP – Displays ICMPv4 network errors
+* TCP – Displays TCPv4 network traffic
+* ETCP – Displays TCPv4 network errors
+* UDP – Displays UDPv4 network traffic
+* SOCK6, IP6, EIP6, ICMP6, UDP6 are for IPv6
+* ALL – This displays all of the above information. The output will be very long.
+
+```sh
+root@trang-20-51:~# sar -n DEV 1 1
+Linux 4.4.0-87-generic (trang-20-51)    10/02/2018  _x86_64_    (2 CPU)
+
+01:46:04 PM     IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+01:46:05 PM        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+01:46:05 PM br-d60bbe8e16f5      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+01:46:05 PM   docker0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+01:46:05 PM      ens3      5.00      1.00      0.39      0.18      0.00      0.00      0.00      0.00
+
+Average:        IFACE   rxpck/s   txpck/s    rxkB/s    txkB/s   rxcmp/s   txcmp/s  rxmcst/s   %ifutil
+Average:           lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:    br-d60bbe8e16f5      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:      docker0      0.00      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+Average:         ens3      5.00      1.00      0.39      0.18      0.00      0.00      0.00      0.00
+```
+
 
 
 ## mpstat
@@ -375,7 +564,6 @@ iptraf-ng -i <interface_name_here>
 Bạn có thể sử dụng tool này để tìm hiểu các vấn đề liên quan đến mạng. Bạn có thể tìm thấy TCP/IP retransmission, windows size scaling, name resolution problem, network misconfiguration,... 
 
 Chú ý rằng các tool này chỉ giám sát các frames mà network adapter nhận được chứ không phải toàn bộ lưu lượng trong mạng.
-
 
 
 ## nmon
