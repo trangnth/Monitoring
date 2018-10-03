@@ -86,7 +86,7 @@ Dưới đây là ví dụ về cách xác định loại state, khi state thay 
 |5|	3|	WARNING|	HARD|	No|	Service stabilizes in a HARD problem state. Depending on what the notification interval for the service is, another notification might be sent out.|
 |6|	1|	OK|	HARD|	Yes|	Service experiences a HARD recovery. Event handlers execute and a recovery notification is sent out.|
 |7|	1|	OK|	HARD|	No	|Service is still OK.|
-|8|	1|	UNKNOWN|	SOFT|	Yes	Service is detected as changing to a SOFT non-OK state. Event handlers execute.|
+|8|	1|	UNKNOWN|	SOFT|	Yes|	Service is detected as changing to a SOFT non-OK state. Event handlers execute.|
 |9|	2|	OK|	SOFT|	Yes|	Service experiences a SOFT recovery. Event handlers execute, but notification are not sent, as this wasn't a "real" problem. State type is set HARD and check # is reset to 1 immediately after this happens.|
 |10| 1|	OK|	HRD|	No|	Service stabilizes in an OK state.|
 
