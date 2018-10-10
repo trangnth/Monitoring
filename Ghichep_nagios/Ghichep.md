@@ -108,3 +108,20 @@ Một host hoặc service được xác định là `started` flapping khi phầ
 Một host hoặc service được xác định là `stopped` flapping khi phần trăm chuyển đổi trạng thái thấp hơn slow flapping threshold.
 
 [see more...](https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/flapping.html)
+
+
+## Install nagios 
+
+Cài đặt nagios trên centos7 theo link dưới đây: 
+
+https://github.com/meditechopen/meditech-ghichep-nagios/blob/master/docs/thuchanh-nagios/1.Setup-CentOS-7.md
+
+Khi cài đặt cần lưu ý: 
+
+* Phải mở một số port (5666..) khi cài agent trên centos7
+* Cài đặt bằng repo epel-release thêm option sau: `--enablerepo=epel`. Ví dụ:
+		
+		yum --enablerepo=epel -y install nrpe nagios-plugins-all
+
+
+
