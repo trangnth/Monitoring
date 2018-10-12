@@ -18,7 +18,7 @@ Bạn sẽ nhìn thấy các BI Pack được cấu hình ở đây, mặc đị
 
 <img src="img/5.png">
 
-Đừng active change, chúng ta tiếp tục tạo các rule trong BI Pack này: 
+Đừng active change vội nhé, chúng ta sẽ tiếp tục tạo các rule trong BI Pack này: 
 
 <img src="img/6.png">
 
