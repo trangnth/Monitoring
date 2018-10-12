@@ -43,7 +43,7 @@ Chúng ta có thể cài đặt gói mongo db-org từ repository của bên th�
 
 Kiểm tra log 
 
-	sudo tail /var/log/mongodb/mongod.log
+	$ sudo tail /var/log/mongodb/mongod.log
 
 Output sẽ tương tự như sau:
 
@@ -57,13 +57,13 @@ Thêm dòng sau vào cuối file `/etc/security/limits.d/20-nproc.conf`:
 
 Khởi động lại dịch vụ:
 
-	sudo systemctl restart mongod
+	$ sudo systemctl restart mongod
 
 #### Verifying Startup
 
 Check trạng thái startup:
 
-	systemctl is-enabled mongod; echo $?
+	$ systemctl is-enabled mongod; echo $?
 
 Output
 	
@@ -82,6 +82,11 @@ Sửa file `/etc/mongod.conf` dòng `bindIp` như sau:
 	net:
 	  port: 27017
 	  bindIp: 0.0.0.0
+
+Chỉnh sửa firewall
+
+	$ firewall-cmd --permanent --add-port=27017/tcp
+	$ firewall-cmd --reload
 
 ### Config Agent check
 
@@ -119,6 +124,8 @@ port   = 27017
 
 Cài đặt thêm thư viện cho plugin:
 
+	$ yum install python-pip
+	$ pip install --upgrade pip
 	$ python -m pip install pymongo
 
 Chạy thử plugin:
@@ -144,13 +151,13 @@ local	startup_log	size	11940
 
 ### Config check_mk
 
-Lên giao diện của check_mk vào `WATO` -> `Hosts` sau đó chọn `Discovery` để tìm các service mới được monitor, sau đó ta sẽ được kết quả như sau:
+Lên giao diện của check_mk vào `WATO` -> `Hosts` sau đó chọn `Discovery` để tìm các service mới được monitor
+
+<img src="img/22.png">
+
+Active change, sau đó ta sẽ được kết quả như sau:
 
 <img src="img/21.png">
-
-
-
-
 
 
 
@@ -162,3 +169,4 @@ https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-cento
 https://nobudgetadmin.blogspot.com/2016/07/how-to-quickly-install-checkmk-plugins.html
 https://medium.com/mongoaudit/how-to-enable-authentication-on-mongodb-b9e8a924efac
 https://docs.mongodb.com/manual/tutorial/enable-authentication/
+https://www.mail-archive.com/checkmk-en@lists.mathias-kettner.de/msg23627.html
