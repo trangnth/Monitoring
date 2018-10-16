@@ -63,3 +63,10 @@ Vào `VIEWS` -> `Business Intelligence` -> `All Aggregation`, ta sẽ thấy Agg
 <img src="img/20.png">
 
 
+## Tham khảo
+
+https://mathias-kettner.de/checkmk_bi_rules.html
+
+https://truepath.zendesk.com/hc/en-us/articles/115005488806-Detailed-Reports-On-B-I-Aggregates-In-Check-MK
+
+https://mathias-kettner.de/checkmk_bi_example.html
