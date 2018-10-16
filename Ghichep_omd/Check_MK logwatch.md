@@ -24,7 +24,7 @@ Tạo một file config `/etc/check_mk/logwatch.cfg` trên agent với nội dun
 
 Giải thích sơ qua về file cấu hình trên:
 
-* Dòng đầu tiên: F
+* Dòng đầu tiên: 
 	* File `/home/trangnth/serviceError.log`  đang được theo dõi
 	* `maxlines` cấu hình về số lượng dòng log mới lớn nhất của file được chấp nhận check (còn lại sẽ bị drop) 
 	* `maxtime` Thời gian lớn nhất cho việc parsing các dòng log mới
@@ -39,7 +39,7 @@ Restart lại agent:
 
 	service xinetd restart
 
-Lên web của check_mk `Discovery` lại host
+Truy cập giao diện web của check_mk `Discovery` lại host
 
 <img src="img/23.png">
 
@@ -89,7 +89,7 @@ Ví dụ tôi sẽ tạo một file `/omd/sites/monitoring/etc/logrotate.d/logwa
 }
 ```
 
-Áp dụng cho tất cả các file log của host `DB` trong thư mục `omd/sites/monitoring/var/check_mk/logwatch/DB/` có đuôi là `.log` và bên dưới là một số các thông tin cấu hình.
+Dòng đầu tiên nghĩa là áp dụng cho tất cả các file log của host `DB` trong thư mục `omd/sites/monitoring/var/check_mk/logwatch/DB/` có đuôi là `.log` và bên dưới đó là một số các thông tin cấu hình.
 
 Logrotate kiểm soát trạng thái của các file log tại file `/omd/sites/monitoring/tmp/run/logrotate.state`
 
@@ -114,7 +114,7 @@ Khởi động lại omd:
 
 Sau khi cấu hình xong, cứ một tiếng, crontab sẽ chạy để rotate file log của host DB, việc này sẽ tạo ra các file mới để lưu log (và có thể được nén ) tại cùng thư mục đó và xóa đi file log cũ
 
-<img src="img/27.png">
+<img src="img/29.png">
 
 Log trên website cũng hiển thị là không có log, state của service sẽ chuyển lại trạng thái ban đầu là `OK`.
 
