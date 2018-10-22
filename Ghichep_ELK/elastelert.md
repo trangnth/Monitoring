@@ -40,7 +40,38 @@ Nếu gặp lỗi version setuptools, chạy lệnh sau để upgrade versions r
 
 	pip install --upgrade setuptools
 
-Tạo file config:
+#### Lưu ý một số lỗi
+
+* Nếu gặp phải lỗi sau khi cài đặt các gói trong requirements.txt:
+
+<img src="img/1.png">
+
+Thì ta cần cài lại phiên bản urllib3 cho phù hợp:
+
+	pip uninstall urllib3
+	pip install urllib3==1.21.1
+
+* Lỗi blist `No such file or directory` 
+
+```sh
+    blist/_blist.c:38:20: fatal error: Python.h: No such file or directory
+     #include <Python.h>
+                        ^
+    compilation terminated.
+    error: command 'gcc' failed with exit status 1
+    
+    ----------------------------------------
+Command "/usr/bin/python2 -u -c "import setuptools, tokenize;__file__='/tmp/pip-install-DerUPX/blist/setup.py';f=getattr(tokenize, 'open', open)(__file__);code=f.read().replace('\r\n', '\n');f.close();exec(compile(code, __file__, 'exec'))" install --record /tmp/pip-record-DL3_wb/install-record.txt --single-version-externally-managed --compile" failed with error code 1 in /tmp/pip-install-DerUPX/blist/
+```
+
+Cần phải cài đặt python-blist:
+
+	yum install python-blist
+
+Sau đó chạy lại lệnh install 
+
+
+#### Tạo file config:
 
 	cp config.yaml.example config.yaml
 
@@ -75,7 +106,7 @@ $ vim /root/elastalert/alert_rules/test.yml
 es_host: 'localhost'
 es_port: 9200
 
-index: filebeat-*
+index: log*
 name: SSH Authentication Failure
 type: any
 
@@ -152,3 +183,5 @@ Stop zdaemon
 ## Tham khảo:
 
 https://elastalert.readthedocs.io/en/latest/running_elastalert.html
+
+https://centos.pkgs.org/7/epel-x86_64/python-blist-1.3.6-1.el7.x86_64.rpm.html
