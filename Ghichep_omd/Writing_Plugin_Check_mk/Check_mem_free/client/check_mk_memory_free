@@ -1,0 +1,33 @@
+#!/usr/bin/python
+
+from psutil import virtual_memory
+
+def calculator():
+    mem = virtual_memory()
+    memtotal = mem.total/(1024.**3)
+    memused = mem.used/(1024.**3)
+    memfree = mem.free/(1024.**3)
+#    memfree = 1
+
+    return memtotal, memused, memfree
+    
+def main():
+    mem_total, mem_used, mem_free = calculator()
+    print ("<<<check_mk_memory_free>>>")
+#    print ("Memory Free: {0}".format(mem_free))
+    percent_free = (mem_free / mem_total) * 100
+    print ("Memory Free: {0:.2f} GB, used {1:.2f} % of {2:.2f} GB".format(mem_free, 100 - percent_free, mem_total))
+#    print ("Memory Free: {0:.2f}".format(mem_free))
+#    print ("Memory Used: {0:.2f}".format(mem_used))
+#    print ("Memory Total: {0:.2f}".format(mem_total))
+#    print ("Percent Free: {0:.2f}".format(percent_free))
+#    if (percent_free >= 0.6):
+#        return 0
+#    elif (percent_free >= 0.4):
+#        return 1
+#    elif (percent_free <= 0.4):
+#        return 2
+ 
+
+if __name__ == '__main__':
+    main()

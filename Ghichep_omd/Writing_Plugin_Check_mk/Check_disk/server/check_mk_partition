@@ -1,0 +1,53 @@
+#!/usr/bin/python3.5
+
+factory_settings['check_mk_partition_default_value'] = {
+    'config': ((None, None), False),
+}
+
+def inventory_check_mk_partition(info):
+    for line in info:
+        line = " ".join(line)
+        line = str(line)
+        data = line.split(':')
+        check_mk_partition_item = "Partition service: " + str(data[0])
+        yield (check_mk_partition_item, "check_mk_partition_default_value")
+
+def check_mk_partition(item, params, info):
+#    print (item, params, info)
+    hostinfo_in_item=''
+    if ":" in item:
+        item_as_list = item.split(": ")
+        host_in_item, hostinfo_in_item = item_as_list
+    else:
+        hostinfo_in_item = item
+    
+    info_as_dict = {} 
+    for line in info:
+        line = " ".join(line) 
+        if ":" in line:
+            line_as_list = line.split(': ')
+            line_as_list[1] = line_as_list[1].split(' ')
+	    info_as_dict.update({line_as_list[0]: line_as_list[1]})
+#            print(line_as_list)
+    
+    percent = float(info_as_dict[hostinfo_in_item][5])
+    state = 3
+    if percent <= 80:
+        state = 0
+    elif percent <=90:
+        state = 1
+    elif percent > 90:
+        state = 2
+    output = " ".join(info_as_dict[hostinfo_in_item])
+    #print (output)
+    return state, output, [(state, percent)]
+
+# check_mk_info la ten cua plugin
+check_info ["check_mk_partition"] = {
+    'default_levels_variable': "check_mk_partition_default_value",
+    'inventory_function': inventory_check_mk_partition,
+    'check_function': check_mk_partition,
+    'service_description': 'CheckMK info',
+    'has_perfdata': True,
+    'group': "check_mk_info",
+}

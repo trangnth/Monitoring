@@ -1,0 +1,25 @@
+#!/usr/bin/python
+import subprocess
+
+def check_disk():
+    part = subprocess.Popen(["pydf", "--bw"], stdout=subprocess.PIPE)
+    count = 0
+    for line in part.stdout:
+        if count == 0:
+            count = 1
+            continue
+        splitline = line.decode().split()
+#        print(splitline)
+#        print (splitline[1])
+#    return splitline
+
+#def main():
+#    print ("<<<check_mk_partition>>>")
+#    for part in check_disk():
+#    for pa in splitline:
+        print ("{0}: used {1} of {2}, percent {3}".format(splitline[0], splitline[2], splitline[1], splitline[4]))    
+
+if __name__ == '__main__':
+    #main()
+    print ("<<<check_mk_partition>>>")
+    check_disk()
