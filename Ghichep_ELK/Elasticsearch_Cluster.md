@@ -1,0 +1,114 @@
+# Elasticsearch Cluster
+
+Ghi chép trong quá trình thực hiện cài đặt và cấu hình elasticsearch cluster cho ELK
+
+## Chuẩn bị
+
+Ở bài lab này, tôi sử dụng 3 máy CentOS7, với IP như sau:
+
+```sh
+192.168.20.52
+192.168.20.53
+192.168.20.54
+```
+
+
+## Cài đặt 
+
+Cài đặt elasticsearch cho cả tất cả các node, có thể tham khảo [ở đây](https://github.com/datkk06/tong-hop/blob/master/Ghi%20chep%20ELK/2.Cai-dat-ELK.md)
+
+Yêu cầu phải giống nhau về phiên bản, và cấu hình đồng bộ
+
+## Cấu hình
+
+Cấu hình cả 3 node như sau:
+
+	vi /etc/elasticsearch/elasticsearch.yml
+
+sửa các dòng sau:
+
+```sh
+cluster.name: meditech
+node.name: ${HOSTNAME}
+node.master: true  # cấu hình trên node master
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+network.host: 0.0.0.0
+http.port: 9200
+discovery.zen.ping.unicast.hosts: ["192.168.20.52", "192.168.20.53", "192.168.20.54"]
+# Prevent the "split brain" by configuring the majority of nodes (total number of master-eligible nodes / 2 + 1):
+discovery.zen.minimum_master_nodes: 2
+```
+
+Lưu lại và khởi động lại elasticsearch
+
+	systemctl restart elasticsearch 
+
+Nếu firewall đang bật:
+
+	firewall-cmd --add-port={9200/tcp,9300/tcp} --permanent
+	firewall-cmd --reload
+
+Kiểm tra lại:
+
+```sh
+[root@trang-20-53 ~]# curl http://192.168.20.52:9200/_cluster/health?pretty
+{
+  "cluster_name" : "meditech",
+  "status" : "green",
+  "timed_out" : false,
+  "number_of_nodes" : 3,
+  "number_of_data_nodes" : 3,
+  "active_primary_shards" : 124,
+  "active_shards" : 247,
+  "relocating_shards" : 0,
+  "initializing_shards" : 0,
+  "unassigned_shards" : 0,
+  "delayed_unassigned_shards" : 0,
+  "number_of_pending_tasks" : 0,
+  "number_of_in_flight_fetch" : 0,
+  "task_max_waiting_in_queue_millis" : 0,
+  "active_shards_percent_as_number" : 100.0
+}
+```
+
+Xem chi tiết hơn về các node trong cluster:
+
+```sh
+[root@trang-20-53 ~]# curl -XGET 'http://192.168.20.52:9200/_cluster/state?pretty' | less
+{
+  "cluster_name" : "meditech",
+  "compressed_size_in_bytes" : 33658,
+  "cluster_uuid" : "JCWlwfQcT66snelYrdCVOg",
+  "version" : 880,
+  "state_uuid" : "U5xYdGB2RrmiXXVpv5KOBQ",
+  "master_node" : "lMdJI15iTy6kbslzAFxd8w",
+  "blocks" : { },
+  "nodes" : {
+    "MumVRMRTQaqRIMt5ROfz5Q" : {
+      "name" : "kvm-20-52",
+      "ephemeral_id" : "rLJ6ggXwSFyh7cgmNxJZ1Q",
+      "transport_address" : "192.168.20.52:9300",
+      "attributes" : { }
+    },
+    "YbOgPYJEQACbrNtEdgqMGQ" : {
+      "name" : "trang-20-53",
+      "ephemeral_id" : "ac9WVUszT0ub57wzstMKrg",
+      "transport_address" : "192.168.20.53:9300",
+      "attributes" : { }
+    },
+    "lMdJI15iTy6kbslzAFxd8w" : {
+      "name" : "trang-20-54",
+      "ephemeral_id" : "lMil-Sc6Sc2pQbAiHt48hg",
+      "transport_address" : "192.168.20.54:9300",
+      "attributes" : { }
+	...
+```
+
+
+## Tham khảo
+
+https://www.digitalocean.com/community/tutorials/how-to-set-up-a-production-elasticsearch-cluster-on-centos-7
+
+https://www.server-world.info/en/note?os=CentOS_7&p=elasticstack6&f=2
+
