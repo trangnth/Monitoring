@@ -13,7 +13,9 @@ from novaclient import client
 loader = loading.get_plugin_loader('password')
 
 # Khai bao path luu tru cua compute2 tren whisper va ip controller
-whisper_path = '/var/lib/carbon/whisper/collectd/compute2/'
+list_compute = ['compute1', 'compute2']
+whisper_path = '/var/lib/carbon/whisper/collectd/'
+
 ip_con = '192.168.40.11'
 ssl = 'http'
 
@@ -25,33 +27,36 @@ user_domain_id = "default"
 project_domain_id = "default"
 
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format='%(asctime)s - %(levelname)s - %(message)s',
     level=logging.INFO)
-loger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 # List uuid VMs
-auth = loader.load_from_options(auth_url=auth_url, username=username, password=password, project_name=project_name, user_domain_id=user_domain_id, project_domain_id=project_domain_id)
-sess = session.Session(auth=auth)
-nova = client.Client(2, session=sess)
+try:
+    auth = loader.load_from_options(auth_url=auth_url, username=username, password=password, project_name=project_name, user_domain_id=user_domain_id, project_domain_id=project_domain_id)
+    sess = session.Session(auth=auth)
+    nova = client.Client(2, session=sess)
 
-vms = nova.servers.list(search_opts={'all_tenants': 1})
+    vms = nova.servers.list(search_opts={'all_tenants': 1})
 
-list_uuid = []
+    list_uuid = []
 
-for vm in vms:
-	list_uuid.append(vm._info['id'])
+    for vm in vms:
+        list_uuid.append(vm._info['id'])
+except Exception as e:
+    loger.critical(e)
 
 
 # List database whisper
-list_dir = os.listdir(whisper_path)
-list_dir.remove("compute2")
-
-
-diff = set(list_dir) - set(list_uuid)
-
-print ("Removing...")
-for i in diff:
-    print ("  ", i)
-    shutil.rmtree(os.path.join(whisper_path, i))
-
-print("Finished.")
+logger.info("Start check VMs deleted.")
+for com in list_compute:
+    list_vm = []
+    path = whisper_path + com
+    
+    list_vm = os.listdir(path)
+    list_vm.remove(com)
+    
+    diff = set(list_vm) - set(list_uuid)
+    for i in diff:
+        logger.info("Delete " + i + " from " + com)
+        shutil.rmtree(os.path.join(path, i))
