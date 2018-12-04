@@ -20,7 +20,7 @@ location /nginx_status {
 ...
 ```
 
-Ví dụ file cấu hình của nginx [nginx.conf](conf/nginx.conf)
+Ví dụ file cấu hình của nginx [nginx.conf](conf/nginxhttp.conf)
 
 Khởi động lại dịch vụ
 
@@ -45,11 +45,11 @@ Copy file cấu hình plugin trên server về máy. Thường trên client, plu
 
 Ví dụ rên server của tôi với phiên bản 1.5.0p5 dùng lệnh:
 
-	scp /omd/versions/1.5.0p5.cre/share/check_mk/agents/plugins/nginx_status root@<your_ip_client_server:/usr/lib/check_mk_agent/plugins
+	scp /omd/versions/1.5.0p5.cre/share/check_mk/agents/plugins/nginx_status root@<your_ip_client>:/usr/lib/check_mk_agent/plugins
 
-Hoặc có thể xem ở đây [nginx_status](plugin/nginx_status)
+Hoặc có thể xem ở đây [nginx_status](plugin/nginx_status_http)
 
-Trên client chạy thử plugin:
+Trên client chạy thử plugin (nhớ phải phân quyền thực thi cho file):
 
 ```sh
 $ cd /usr/lib/check_mk_agent/plugins
@@ -70,3 +70,47 @@ Trên wen interface của check_mk, discovery lại các service
 <img src="img/30.png">
 
 <img src="img/31.png">
+
+
+### Chú ý
+
+Nếu server chạy ssl, thì cần sửa plugin `/usr/lib/check_mk_agent/plugins/nginx_status` như sau:
+
+```sh
+...
+import ssl
+...
+# None or list of (proto, ipaddress, port) tuples.
+# proto is 'http' or 'https'
+servers = None      #line 50
+ssl_port = [443, ]						   # line 51
+...
+```
+
+Vẫn file đó, thêm và sửa các dòng 127 - 132 như phần dưới đây
+
+```sh
+....
+122		try:
+123         url = '%s://%s:%s/%s' % (proto, address, port, page)
+124         # Try to fetch the status page for each server
+125         try:
+126    
+127             myssl = ssl.create_default_context();
+128             myssl.check_hostname=False
+129             myssl.verify_mode=ssl.CERT_NONE
+130 
+131             request = urllib2.Request(url, headers={"Accept" : "text/plain"})
+132             fd = urllib2.urlopen(request, context=myssl)
+133 
+134 
+135 
+136         except urllib2.URLError, e:
+137             if 'SSL23_GET_SERVER_HELLO:unknown protocol' in str(e):
+...
+```
+
+Save file và thoát
+
+Có thể xem thêm [nginx.conf](conf/nginxhttp.conf) [nginx_status](plugin/nginx_https)
+
