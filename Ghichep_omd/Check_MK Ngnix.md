@@ -20,7 +20,7 @@ location /nginx_status {
 ...
 ```
 
-Ví dụ file cấu hình của nginx [nginx.conf](conf/ngix.conf)
+Ví dụ file cấu hình của nginx [nginx.conf](conf/nginx.conf)
 
 Khởi động lại dịch vụ
 
