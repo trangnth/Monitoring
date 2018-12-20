@@ -112,5 +112,5 @@ Vẫn file đó, thêm và sửa các dòng 127 - 132 như phần dưới đây
 
 Save file và thoát
 
-Có thể xem thêm [nginx.conf](conf/nginxhttp.conf) [nginx_status](plugin/nginx_https)
+Có thể xem thêm file config [nginx.conf](conf/nginxhttp.conf), file plugin [nginx_status](plugin/nginx_status_https)
 

@@ -101,3 +101,13 @@ https://wiki.opnfv.org/display/fastpath/Libvirt+Plugin+High+Level+Design+Documen
 https://collectd.org/documentation/manpages/collectd.conf.5.shtml#plugin_virt
 
 https://github.com/libvirt/libvirt/blob/master/src/libvirt-domain.c
+
+```sh
+scale(sumSeries(offset(scale(cc0a7ced-8781-42ff-9ccf-62f54b47b681.*.virt_vcpu*,%200),%201)),%201000000000)
+scale(sumSeries(offset(scale(cc0a7ced-8781-42ff-9ccf-62f54b47b681.*.virt_vcpu*,%200),%201)),%201000000000))
+
+target = scale(divideSeries(scale(sumSeries(offset(scale(cc0a7ced-8781-42ff-9ccf-62f54b47b681.*.virt_vcpu*, 0), 1)), 1000000000),
+							scale(sumSeries(offset(scale(cc0a7ced-8781-42ff-9ccf-62f54b47b681.*.virt_vcpu*, 0), 1)), 1000000000)
+							),*100
+				)
+```

@@ -2,7 +2,7 @@
 
 ### Cấu hình Logwatch
 
-Check log mỗi và báo lại mỗi lần log có từ `error`
+Check log và báo lại mỗi lần log có từ `error`
 
 Trên Linux Logfiles được giám sát bằng extension của check_mk_agent là `logwatch`.
 
