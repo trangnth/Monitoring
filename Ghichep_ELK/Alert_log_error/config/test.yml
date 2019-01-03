@@ -1,0 +1,35 @@
+# The following values need to be configured for your environment
+es_host: 192.168.20.53
+es_port: 9200
+
+index: log*
+name: Notiy log
+type: any
+
+filter:
+- query:
+    query_string:
+      query: "event_type:mbf_error_log"
+
+alert:
+#- "email"
+- "slack"
+email:
+#- "bosua666@gmail.com"
+
+slack_webhook_url:
+- "https://hooks.slack.com/services/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"
+slack_channel_override: "#elastelert"
+slack_username_override: "TRANG-ALERT"
+
+alert_text: |
+    ElastAlert has detected a failed login attempt:
+    Message: {0}
+    Source Host: {1}
+    Timestamp: {2}
+alert_text_args:
+  - "message"
+  - "host.name"
+  - "@timestamp"
+
+alert_text_type: alert_text_only
