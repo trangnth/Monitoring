@@ -1,6 +1,6 @@
 ## Cấu hình ELK phân tích log có từ Error
 
-File log mẫu như [ở đây](config/mau_log.txt)
+File log mẫu như [ở đây](mau_log.txt)
 
 Cấu hình Filebeat tương tự như sau:
 
@@ -108,7 +108,7 @@ Tạo thư mục chứa các file rule
 mkdir -p /root/elastalert/alert_rules/
 ```
 
-Tạo một file rule trong thư mục vừa tạo trên
+Tạo một file rule trong thư mục vừa tạo trên để cấu hình gửi cảnh báo về slack
 ```sh
 cat << EOF >> /root/elastalert/alert_rules/test.yml
 # The following values need to be configured for your environment
