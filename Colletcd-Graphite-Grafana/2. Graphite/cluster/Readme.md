@@ -2,6 +2,8 @@
 
 Graphite là nơi thu nhận và lưu trữ dữ liệu tập trung, các dữ liệu này sẽ được đẩy từ nhiều nguồn collectd khác nhau. Trong đó carbon-cache sẽ là thành phần nhận dữ liệu và đẩy xuống DB để lưu trữ (whisper), khi có quá nhiều client đẩy dữ liệu lên cùng một lúc, carbon-cache không xử lý kịp, whisper không lưu trữ kịp, sẽ gây lên mất mát dữ liệu. Để tránh đều này, ở đây tôi sẽ sử dụng thêm carbon-relay và cacbon-aggregator, tạo thêm các cacbon-cache instance để giảm tải cho server (mỗi instance là một core).
 
+<img src="../img/4.png">
+
 Mặc định thì carbon-relay và cacbon-aggregator sẽ bị tắt, để bật nó lên chạy câu lệnh sau:
 
 	systemctl start carbon-relay cacbon-aggregator

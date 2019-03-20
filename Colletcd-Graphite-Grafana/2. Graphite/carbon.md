@@ -14,7 +14,7 @@ Lưu trữ tạm thời các dữ liệu trong bộ nhớ cache sau đó ghi ch�
 
 Cacbon-relay dùng để chuyển tiêp metrics từ cacbon process này sang cacbon khác. Có thể hiểu nó như các điểm kết dính của graphite. Bất kể khi nào cần phát triển graphite cluster, chắc chắn sẽ cần carbon-relay. 
 
-<img src="1.png"> 
+<img src="img/1.png"> 
 
 
 ### relay-rules.conf
