@@ -44,7 +44,7 @@ try:
     for vm in vms:
         list_uuid.append(vm._info['id'])
 except Exception as e:
-    loger.critical(e)
+    logger.critical(e)
 
 
 # List database whisper
@@ -54,7 +54,7 @@ for com in list_compute:
     path = whisper_path + com
     
     list_vm = os.listdir(path)
-    list_vm.remove(com)
+    list_compute.remove(com)
     
     diff = set(list_vm) - set(list_uuid)
     for i in diff:
