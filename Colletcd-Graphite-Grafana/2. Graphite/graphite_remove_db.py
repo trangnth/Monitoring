@@ -54,7 +54,7 @@ for com in list_compute:
     path = whisper_path + com
     
     list_vm = os.listdir(path)
-    list_compute.remove(com)
+#    list_compute.remove(com)
     
     diff = set(list_vm) - set(list_uuid)
     for i in diff:
