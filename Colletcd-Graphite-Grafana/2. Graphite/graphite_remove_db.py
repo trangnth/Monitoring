@@ -16,10 +16,12 @@ loader = loading.get_plugin_loader('password')
 list_compute = ['compute1', 'compute2']
 whisper_path = '/var/lib/carbon/whisper/collectd/'
 
-ip_con = '192.168.40.11'
+# IP controller
+ip_con = '192.168.40.11' 
 ssl = 'http'
 
 auth_url = "{0}://{1}:5000/v3".format(ssl, ip_con)
+# Thong tin xac thuc project admin
 username = "admin"
 password = "Welcome123"
 project_name = "admin"
