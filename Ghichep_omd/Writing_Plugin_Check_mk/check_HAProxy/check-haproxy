@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Set environment variables (New line is the only separator)
+IFS=$'\n'
+set -f
+
+# Login to haproxy and retrieve site list
+for i in $(curl -u admin:123@123Aa -Ls http://192.168.50.140:9000/stats | grep "td class=ac")
+do
+
+# Skip false pages
+    if [[ $i == *"Backend"* ]]; then
+        :
+    else
+        if [[ $i == *"Frontend"* ]]; then
+            n=$(echo $i | awk -F'a name="' ' {print $3}' | sed 's/ *\".*//')
+            ss=$(echo $i | awk -F'tr class="active*' '{print $2}')
+            
+        else
+            n=$(echo $i | awk -F'a name="' ' {print $2}' | sed 's/ *\".*//')
+            # ss=$(echo $i | awk -F'tr class="active_' '{print $2}' | sed 's/ *\".*//' | sed '/^$/d')
+            ss=$(echo $i | awk -F'tr class="active*' '{print $2}')
+        fi
+        
+        # Check result to determine of site is up or down
+        if [[ $ss == *"UP"* ]]; then
+            s=0
+            st="Site $n is Up"
+        else
+            s=2
+            st="Site $n is Down"
+        fi
+        echo "$s haproxy_$n varname=2;crit $st"
+    fi
+done
