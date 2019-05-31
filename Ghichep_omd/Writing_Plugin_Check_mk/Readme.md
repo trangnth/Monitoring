@@ -1,6 +1,6 @@
 # Writing checks for Check_mk
 
-Có hai cách viết plugin chính cho check_mk:
+Có hai cách viết plugin chính cho check_mk theo kiểu nrpe:
 
 1. Local check: 
 
