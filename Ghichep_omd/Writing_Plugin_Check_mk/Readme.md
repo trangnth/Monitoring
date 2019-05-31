@@ -1,5 +1,7 @@
 # Writing checks for Check_mk
 
+[**Tham khảo chính từ MinhKMA**](https://github.com/MinhKMA/plugin_checkMK)
+
 Có hai cách viết plugin chính cho check_mk:
 
 1. Local check: 
@@ -106,13 +108,13 @@ Trong đó:
 
 ## Tham khảo
 
-https://mathias-kettner.de/checkmk_writing_checks.html
+[1] https://mathias-kettner.de/checkmk_writing_checks.html
 
-https://minhkma.github.io/2018/10/plugin_checkmk_openstack/
+[2] https://minhkma.github.io/2018/10/plugin_checkmk_openstack/
 
-http://www2.steinkogler.org/steinkogler.org/2016/08/21/check-mk-write-your-own-check/
+[3] http://www2.steinkogler.org/steinkogler.org/2016/08/21/check-mk-write-your-own-check/
 
 
-`/opt/omd/versions/1.5.0p5.cre/share/check_mk/checks`
+> `/opt/omd/versions/1.5.0p5.cre/share/check_mk/checks`
 
-`/opt/omd/sites/monitoring/share/check_mk/checks`
+> `/opt/omd/sites/monitoring/share/check_mk/checks`
