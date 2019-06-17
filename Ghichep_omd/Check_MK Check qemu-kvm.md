@@ -38,6 +38,42 @@ wget https://raw.githubusercontent.com/Bastian-Kuhn/Check_MK-Treasures/master/qe
 chmod +x qemu
 ```
 
+Update script:
+
+```sh
+# updated formating:
+# Bastian Kuhn 08/2018
+
+# updated by
+# MinhKMA 06/2019
+
+if which virsh >/dev/null; then
+    echo '<<<qemu>>>'
+    virsh list | grep -v 'State' | grep -v '^--' | grep -v '^$' | while read L
+    do
+            ID=$(echo $L | awk '{print $1}')
+            NAME=$(echo $L | awk '{print $2}')
+            STATE=$(echo $L | awk '{print $3}')
+            NUM_VCPU=$(virsh dominfo $NAME | grep 'CPU(s)' | awk '{print $2}')
+            MEM=$(virsh dominfo $NAME | grep 'Used memory' | awk '{print $3}')
+            let MEM=MEM/1024
+            PID=$(ps aux | grep kvm | grep $NAME | awk '{print $2}')
+            if [ $PID -gt 0 ]; then
+                    DATA=$(top -p $PID -n 1 -b | tail -1  | awk -- '{print $9" "$10}')
+                    CPU=$(top -p $PID -n 1 -b | tail -1  | awk -- '{print $9}')
+                    AVG_CPU=$(awk -v CPU=$CPU -v NUM_VCPU=$NUM_VCPU 'BEGIN { print  ( CPU / NUM_VCPU ) }')
+                    RAM=$(top -p $PID -n 1 -b | tail -1  | awk -- '{print $10}')
+            else
+                    DATA=""
+                    AVG_CPU=""
+                    RAM=""
+            fi
+            echo $ID" "$NAME" "$STATE" "$MEM" "$AVG_CPU" "$RAM
+    done
+fi
+```
+
+
 Chạy thử script:
 
 ```sh
@@ -67,13 +103,13 @@ Chạy thử script:
 
 <img src="img/35.png">
 
-Tạo một rule mới 
+* Tạo một rule mới 
 
 <img src="img/36.png">
 
 <img src="img/37.png">
 
-Lưu rule lại, và check lại các service trên host
+* Lưu rule lại, và check lại các service trên host
 
 <img src="img/38.png">
 
@@ -81,7 +117,11 @@ Lưu rule lại, và check lại các service trên host
 
 <img src="img/40.png">
 
+### Edit plugin to check Network
 
+Sửa file trên server `/omd/sites/monitoring/local/share/check_mk/checks/qemu` như [ở đây](script/check_mk-qemu-agent.sh)
+
+Sửa file trên client như [ở đây](script/check_mk-qemu-server.py)
 
 
 ## Tham khảo
@@ -89,3 +129,9 @@ Lưu rule lại, và check lại các service trên host
 [1] https://checkmk.com/check_mk-exchange-file.php?&file=qemu-1.0.mkp
 
 [2] https://github.com/Bastian-Kuhn/Check_MK-Treasures/tree/master/qemu
+
+Check Network, Disk
+
+[3] https://forum.ivorde.com/linux-script-for-interface-network-bandwidth-monitoring-t19764.html\
+
+[4] https://serverfault.com/questions/296674/bandwidth-monitoring-on-kvm
