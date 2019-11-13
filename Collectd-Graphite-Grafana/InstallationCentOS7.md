@@ -25,19 +25,19 @@ Require ip 192.168.20.0/24 # Your ip local
 
 #### Tạo Database
 
-	/usr/lib/python2.7/site-packages/graphite/manage.py syncdb 
+    /usr/lib/python2.7/site-packages/graphite/manage.py syncdb 
 
 Sau đó nhập username và password để quản trị. `root:ITC*123@654`
 
 Một số tùy chọn khác như:
 
 * Thay đổi password cho user 
-		
-		/usr/lib/python2.7/site-packages/graphite/manage.py changepassword {YOUR_USERNAME}
+        
+        /usr/lib/python2.7/site-packages/graphite/manage.py changepassword {YOUR_USERNAME}
 
 * Tạo một username mới:
 
-		/usr/lib/python2.7/site-packages/graphite/manage.py createsuperuser
+        /usr/lib/python2.7/site-packages/graphite/manage.py createsuperuser
 
 Khởi động dịch vụ:
 
@@ -50,30 +50,30 @@ systemctl restart httpd
 
 Nếu SELinux đang bật thì thay đổi giá trị boolean như sau:
 
-	setsebool -P httpd_can_network_connect on
+    setsebool -P httpd_can_network_connect on
 
 Nếu firewall đang bật:
 
-	firewall-cmd --add-port=80/tcp
-	firewall-cmd --add-port=80/tcp --permanent
-	firewall-cmd --add-port=2003/tcp --permanent
-	firewall-cmd --add-port=2003/udp --permanent
-	firewall-cmd --reload
+    firewall-cmd --add-port=80/tcp
+    firewall-cmd --add-port=80/tcp --permanent
+    firewall-cmd --add-port=2003/tcp --permanent
+    firewall-cmd --add-port=2003/udp --permanent
+    firewall-cmd --reload
 
 Nếu muốn log rotation hàng ngày thì sử cấu hình trong file sau: `/etc/carbon/carbon.conf`
 
-	ENABLE_LOGROTATION = True
+    ENABLE_LOGROTATION = True
 
 Nếu để dòng trên với giá trị `False` thì carbon sẽ tự động mở lại file cũ (ngày hôm trước) để tiếp tục ghi, còn nếu để `True` thì hàng ngày logrotate daemon sẽ được thực hiện, và carbon sẽ mổ một file mới để ghi.
 
 #### Cấu hình carbon-schemas.conf
 
-	$ vim /etc/carbon/storage-schemas.conf
-	...
-	[default_1min_for_1day]
-	pattern = .*
-	retentions = 120s:120d
-	...
+    $ vim /etc/carbon/storage-schemas.conf
+    ...
+    [default_1min_for_1day]
+    pattern = .*
+    retentions = 120s:120d
+    ...
 
 Ở đây, tôi để cấu hình cho carbon lấy tất cả các metric đẩy về theo chu kỳ 120s lấy một lần (làm data point) và lưu trong 120 ngày
 
@@ -81,7 +81,7 @@ Ngoài ra có thể tham khảo thêm [ở đây](https://github.com/hocchudong/
 
 Khởi động lại carbon:
 
-	systemctl start carbon-cache
+    systemctl start carbon-cache
 
 Có thể cấu hình thêm phần carbon-relay, để chạy graphite cluster.
 
@@ -89,9 +89,9 @@ Có thể cấu hình thêm phần carbon-relay, để chạy graphite cluster.
 
 ## Install collectd on CentOS7
 
-	yum update
-	yum install epel-release
-	yum install collectd
+    yum update
+    yum install epel-release -y 
+    yum install collectd -y 
 
 Sửa file cấu hình: `/etc/collectd.conf`
 
@@ -104,8 +104,8 @@ FQDNLookup   false
 
 Khởi động dịch vụ:
 
-	systemctl enable collectd
-	systemctl start collectd
+    systemctl enable collectd
+    systemctl start collectd
 
 Cấu hình một số các plugin để đẩy log về graphite:
 
@@ -177,7 +177,7 @@ LoadPlugin df
 ...
 <Plugin write_graphite>
   <Node "graphite">
-	# Chanege Your ip graphite    
+    # Chanege Your ip graphite    
     Host "192.168.20.56"
     Port "2003"
     Protocol "tcp"
@@ -196,7 +196,7 @@ Xem chi tiết hơn về cấu hình một số các Plugin [ở đây](https://
 
 Nếu bị lỗi với plugin virt thi có thế khi cài đặt bị thiếu gói, cần cài thêm gói:
 
-    yum install collectd-virt.x86_64
+    yum install collectd-virt.x86_64 -y 
 
 
 ## Install Grafana on CentOS7
@@ -214,8 +214,8 @@ EOF
 
 Install Grafana:
 
-	yum install epel-release -y
-	yum --enablerepo=grafana -y install grafana initscripts fontconfig
+    yum install epel-release -y
+    yum --enablerepo=grafana -y install grafana initscripts fontconfig
 
 
 File cấu hình:
@@ -237,13 +237,13 @@ $ vim /etc/grafana/grafana.ini
 
 Khởi động dịch vụ:
 
-	systemctl start grafana-server 
-	systemctl enable grafana-server
+    systemctl start grafana-server 
+    systemctl enable grafana-server
 
 Nếu firewall đang bật:
 
-	firewall-cmd --add-port=3000/tcp --permanent 
-	firewall-cmd --reload
+    firewall-cmd --add-port=3000/tcp --permanent 
+    firewall-cmd --reload
 
 Truy cập vào theo đường link sau: `http://<ip_server_grafana>:3000` với username và password là admin:admin.
 
@@ -290,3 +290,47 @@ Hai gói cần download là `collectd-5.8.1-1.el7.x86_64.rpm` và `collectd-virt
 Cài đặt:
    
     rpm -i collectd-*
+
+Ví dụ cấu hình collectd thu thập dữ liệu của các máy ảo thông qua libvirt:
+
+```sh
+Hostname    "compute1"
+FQDNLookup   false
+
+LoadPlugin write_graphite
+LoadPlugin unixsock
+LoadPlugin virt
+Interval 60
+
+<Plugin unixsock>
+    SocketFile "/var/run/collectd-unixsock"
+    SocketGroup "collectd"
+    SocketPerms "0770"
+    DeleteSocket false
+</Plugin>
+
+<Plugin "virt">
+   RefreshInterval 60
+   Connection "qemu:///system"
+   BlockDeviceFormat "target"
+   HostnameFormat "uuid"
+   InterfaceFormat "address"
+   PluginInstanceFormat name
+   ExtraStats "cpu_util disk_err domain_state job_stats_background perf vcpupin"
+</Plugin>
+
+<Plugin write_graphite>
+  <Node "graphite">
+        # Chanege Your ip graphite
+    Host "192.168.40.129"
+    Port "2003"
+    Protocol "tcp"
+    LogSendErrors true
+    Prefix "collectd.compute1."
+    #Postfix "collectd"
+    StoreRates true
+    AlwaysAppendDS false
+    EscapeCharacter "_"
+  </Node>
+</Plugin>
+```
