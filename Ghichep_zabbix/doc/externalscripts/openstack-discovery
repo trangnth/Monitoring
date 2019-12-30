@@ -1,0 +1,127 @@
+#!/usr/bin/python3.6
+
+
+from sys import exit
+from sys import argv
+from sys import stderr
+import json
+from datetime import datetime
+import re
+
+from urllib.parse import urlparse
+
+try:
+  from keystoneclient.v2_0 import client as keystone_client
+  from keystoneclient.auth.identity import v2
+  from novaclient import client
+except ImportError:
+  print ('ZBX_NOTSUPPORTED\x00 Failed to import openstack python modules')
+  exit(1)
+
+try:
+  from keystoneauth1.identity import v3
+  from keystoneauth1 import session
+  from keystoneclient.v3 import client as kv3client
+except ImportError:
+  # endpoints_v3 and hypervisors_v3 will failed...
+  pass
+
+def get_host_port(url):
+    parsed = urlparse(url)
+    if parsed:
+        # Case of https/http endpoints where port wasn't explicitly define
+        if not parsed.port:
+            if "https" in url:
+                return (parsed.hostname, 443)
+            else:
+                return(parsed.hostname, 80)
+        else:
+            return (parsed.hostname, parsed.port)
+
+def print_json(data):
+    print (json.dumps({'data':data},sort_keys=True,indent=7,separators=(',',':')))
+
+def discover_endpoints(auth_url, tenant_name, username, password):
+    conn = keystone_client.Client(username=username, password=password, tenant_name=tenant_name, auth_url=auth_url)
+
+    services = []
+    for e in conn.endpoints.list():
+        host = get_host_port(e.publicurl)
+        if e.enabled:
+            service = conn.services.get(e.service_id)
+            services.append({'{#OS_SERVICENAME}':service.name, '{#OS_SERVICEURL}':e.publicurl, '{#OS_SERVICEHOST}':host[0], '{#OS_SERVICEPORT}':host[1] })
+
+    print_json(services)
+
+def discover_endpoints_v3(auth_url, tenant_name, username, password, user_domain_name, project_domain_name):
+    auth = v3.Password(auth_url=auth_url, username=username,
+                       password=password, project_name=tenant_name,
+                       user_domain_name=user_domain_name, project_domain_name=project_domain_name)
+    sess = session.Session(auth=auth)
+    conn = kv3client.Client(session=sess)
+
+    services = []
+    for e in conn.endpoints.list(interface='public'):
+        host = get_host_port(e.url)
+        if e.enabled:
+            service = conn.services.get(e.service_id)
+            services.append({'{#OS_SERVICENAME}':service.name, '{#OS_SERVICEURL}':e.url, '{#OS_SERVICEHOST}':host[0], '{#OS_SERVICEPORT}':host[1] })
+
+    print_json(services)
+
+def discover_hypervisors(auth_url, tenant_name, username, password):
+    conn = nova = client.Client(2, username, password, tenant_name, auth_url)
+
+    hypervisors = []
+    for h in conn.hypervisors.list(detailed=True):
+        if h.status == 'enabled':
+          hypervisors.append({'{#OS_HYPERVISOR_HOSTNAME}':h.hypervisor_hostname, '{#OS_HYPERVISOR_IP}':h.host_ip, '{#OS_HYPERVISOR_TYPE}':h.hypervisor_type })
+
+    print_json(hypervisors)
+
+def discover_hypervisors_v3(auth_url, tenant_name, username, password, user_domain_name, project_domain_name):
+    auth = v3.Password(auth_url=auth_url, username=username,
+                       password=password, project_name=tenant_name,
+                       user_domain_name=user_domain_name, project_domain_name=project_domain_name)
+    sess = session.Session(auth=auth)
+    conn = client.Client(2, session=sess)
+
+    hypervisors = []
+    for h in conn.hypervisors.list(detailed=True):
+        if h.status == 'enabled':
+          hypervisors.append({'{#OS_HYPERVISOR_HOSTNAME}':h.hypervisor_hostname, '{#OS_HYPERVISOR_IP}':h.host_ip, '{#OS_HYPERVISOR_TYPE}':h.hypervisor_type })
+
+    print_json(hypervisors)
+
+
+if __name__ == '__main__':
+    if (len(argv) not in [6,8]):
+        print ("""Usage: %s TYPE AUTH_URL TENANT USERNAME PASSWORD
+          where
+          TYPE      - one of the following: endpoints hypervisors endpoints_v3 hypervisors_v3
+          AUTH_URL  - URL to keystone
+          TENANT    - tenant name
+          USERNAME  - user name
+          PASSWORD  - password for user
+          (v3 only) USER_DOMAIN_NAME - user domain name
+          (v3 only) PROJECT_DOMAIN_NAME - project domain name
+          """ % argv[0])
+        exit(2)
+    else:
+        (TYPE,AUTH_URL,TENANT,USERNAME,PASSWORD) = argv[1:6]
+
+    if TYPE in ['endpoints_v3', 'hypervisors_v3']:
+        (USER_DOMAIN_NAME, PROJECT_DOMAIN_NAME) = argv[6:]
+
+    if TYPE == 'endpoints':
+      discover_endpoints(AUTH_URL,TENANT,USERNAME,PASSWORD)
+    elif TYPE == 'hypervisors':
+      discover_hypervisors(AUTH_URL,TENANT,USERNAME,PASSWORD)
+    elif TYPE == 'endpoints_v3':
+      discover_endpoints_v3(AUTH_URL,TENANT,USERNAME,PASSWORD, USER_DOMAIN_NAME, PROJECT_DOMAIN_NAME)
+    elif TYPE == 'hypervisors_v3':
+      discover_hypervisors_v3(AUTH_URL,TENANT,USERNAME,PASSWORD, USER_DOMAIN_NAME, PROJECT_DOMAIN_NAME)
+    else:
+      print ('ZBX_NOTSUPPORTED\x00 Unknown type: %s' % TYPE)
+      exit(1)
+
