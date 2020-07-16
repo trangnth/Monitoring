@@ -117,7 +117,7 @@ Chạy thử script:
 
 <img src="img/40.png">
 
-### Edit plugin to check Network
+### Edit plugin to check Network và tốc độ đọc ghi của disk
 
 Sửa file trên server `/omd/sites/monitoring/local/share/check_mk/checks/qemu` như [ở đây](script/check_mk-qemu-agent.sh)
 

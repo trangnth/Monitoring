@@ -70,7 +70,7 @@ Nếu để dòng trên với giá trị `False` thì carbon sẽ tự động m
 
     $ vim /etc/carbon/storage-schemas.conf
     ...
-    [default_1min_for_1day]
+    [default_2min_for_120day]
     pattern = .*
     retentions = 120s:120d
     ...
@@ -97,7 +97,7 @@ Sửa file cấu hình: `/etc/collectd.conf`
 
 ```sh
 ...
-Hostname    "compute2"
+Hostname    "compute02"
 FQDNLookup   false
 ...
 ```
@@ -201,14 +201,21 @@ Nếu bị lỗi với plugin virt thi có thế khi cài đặt bị thiếu g�
 
 ## Install Grafana on CentOS7
 
+Tạo repo với OSS releases
+
 ```sh
 cat > /etc/yum.repos.d/grafana.repo <<'EOF'
+# update 03/05/2020
+# by trangnth
 [grafana]
 name=grafana
-baseurl=https://packagecloud.io/grafana/stable/el/7/$basearch
-gpgkey=https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana
-enabled=0
+baseurl=https://packages.grafana.com/oss/rpm
+repo_gpgcheck=1
+enabled=1
 gpgcheck=1
+gpgkey=https://packages.grafana.com/gpg.key
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
 EOF
 ```
 

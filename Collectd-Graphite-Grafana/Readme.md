@@ -1,6 +1,7 @@
 ## Ghi chép qua trình tìm hiểu Colletcd + Graphite + Grafana
 
 Những thứ cần tập trung tìm hiểu kỹ
+
 ### Collectd
 
 Chủ yếu tìm hiểu về các plugin
