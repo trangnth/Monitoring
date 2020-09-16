@@ -1,0 +1,902 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 17,
+  "iteration": 1565227246969,
+  "links": [],
+  "panels": [
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Graphite",
+      "fill": 2,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 13,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "aaaa"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "hide": true,
+          "refCount": 2,
+          "refId": "A",
+          "target": "collectd.$compute.$uuid.$virt.percent-virt_cpu_total"
+        },
+        {
+          "hide": true,
+          "refCount": 1,
+          "refId": "G",
+          "target": "divideSeries(multiplySeries(#A, #I), #K)",
+          "targetFull": "divideSeries(multiplySeries(collectd.$compute.$uuid.$virt.percent-virt_cpu_total, countSeries(collectd.$compute.$uuid.$virt.*affinity-vcpu_0*)), countSeries(collectd.$compute.$uuid.$virt.virt_vcpu-*))"
+        },
+        {
+          "hide": true,
+          "refCount": 2,
+          "refId": "J",
+          "target": "countSeries(collectd.$compute.$uuid.$virt.cpu_affinity-vcpu_[0-9]*-cpu_0)"
+        },
+        {
+          "hide": true,
+          "refCount": 2,
+          "refId": "K",
+          "target": "countSeries(collectd.$compute.$uuid.$virt.virt_vcpu-*)"
+        },
+        {
+          "hide": true,
+          "refCount": 2,
+          "refId": "I",
+          "target": "countSeries(collectd.$compute.$uuid.$virt.*affinity-vcpu_0*)"
+        },
+        {
+          "hide": true,
+          "refCount": 2,
+          "refId": "B",
+          "target": "collectd.$compute.$uuid.$virt.virt_cpu_total"
+        },
+        {
+          "hide": true,
+          "refCount": 2,
+          "refId": "C",
+          "target": "scale(countSeries(collectd.$compute.$uuid.$virt.virt_vcpu-*), 1000000000)"
+        },
+        {
+          "hide": true,
+          "refCount": 2,
+          "refId": "H",
+          "target": "scale(offset(scale(collectd.$compute.$uuid.$virt.virt_vcpu-*, 0), 1), 1000000000)"
+        },
+        {
+          "hide": false,
+          "refCount": 1,
+          "refId": "D",
+          "target": "aliasSub(scale(divideSeries(#B, #C), 100), '^scale\\(divideSeries\\((.*)\\.(.*)\\.(.*)\\.virt_cpu_total(.*)*', '\\3')",
+          "targetFull": "aliasSub(scale(divideSeries(collectd.$compute.$uuid.$virt.virt_cpu_total, scale(countSeries(collectd.$compute.$uuid.$virt.virt_vcpu-*), 1000000000)), 100), '^scale\\(divideSeries\\((.*)\\.(.*)\\.(.*)\\.virt_cpu_total(.*)*', '\\3')"
+        },
+        {
+          "hide": true,
+          "refCount": 2,
+          "refId": "F",
+          "target": "smartSummarize(collectd.$compute.$uuid.$virt.percent-virt_cpu_total, '1h', 'sum')"
+        },
+        {
+          "hide": true,
+          "refCount": 2,
+          "refId": "E",
+          "target": "summarize(collectd.$compute.$uuid.$virt.percent-virt_cpu_total, '1h', 'sum', true)"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "CPU used",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "%",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Graphite",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 3,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "connected",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/.+In/",
+          "transform": "negative-Y"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "A",
+          "target": "alias(collectd.$compute.$uuid.$virt.$interface.tx, 'Data Out')"
+        },
+        {
+          "refCount": 0,
+          "refId": "B",
+          "target": "alias(collectd.$compute.$uuid.$virt.$interface.rx, 'Data In')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Network $uuid",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "Bps",
+        "Bps"
+      ],
+      "yaxes": [
+        {
+          "format": "Bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Graphite",
+      "fill": 1,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "id": 11,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "hide": true,
+          "refCount": 0,
+          "refId": "A",
+          "target": "collectd.$compute.$uuid.$virt.memory-unused"
+        },
+        {
+          "hide": true,
+          "refCount": 0,
+          "refId": "B",
+          "target": "collectd.$compute.$uuid.$virt.memory-total"
+        },
+        {
+          "hide": true,
+          "refCount": 1,
+          "refId": "C",
+          "target": "scale(divideSeries(#A, #B), 100)",
+          "targetFull": "scale(divideSeries(collectd.$compute.$uuid.$virt.memory-unused, collectd.$compute.$uuid.$virt.memory-total), 100)"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "E",
+          "target": "aliasByNode(scale(#A, 1e-9), 3)",
+          "targetFull": "aliasByNode(scale(collectd.$compute.$uuid.$virt.memory-unused, 1e-9), 3)"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Ram Free",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Graphite",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "id": 5,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "connected",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/write/",
+          "transform": "negative-Y"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "A",
+          "target": "alias(collectd.$compute.$uuid.$virt.$diskops.read, 'read')"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "B",
+          "target": "alias(collectd.$compute.$uuid.$virt.$diskops.write, 'write')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "DISK IOPS $uuid",
+      "tooltip": {
+        "msResolution": false,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "none",
+        "Bps"
+      ],
+      "yaxes": [
+        {
+          "format": "ops",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "columns": [],
+      "datasource": "Graphite",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 15,
+      "links": [],
+      "pageSize": null,
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 1,
+        "desc": false
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "date"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "refId": "A",
+          "target": "alias(summarize(collectd.$compute.$uuid.$virt.memory-unused, '1h', 'sum', false), 'sum 1h')"
+        }
+      ],
+      "title": "Memory unused",
+      "transform": "timeseries_to_columns",
+      "type": "table"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Graphite",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "grid": {
+        "leftLogBase": 1,
+        "leftMax": null,
+        "leftMin": null,
+        "rightLogBase": 1,
+        "rightMax": null,
+        "rightMin": null
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 4,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "connected",
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/write/",
+          "transform": "negative-Y"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "A",
+          "target": "alias(collectd.$compute.$uuid.$virt.$diskrw.read, 'read')"
+        },
+        {
+          "hide": false,
+          "refCount": 0,
+          "refId": "B",
+          "target": "alias(collectd.$compute.$uuid.$virt.$diskrw.write, 'write')"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "DISK R/W $uuid",
+      "tooltip": {
+        "msResolution": true,
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "x-axis": true,
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "y-axis": true,
+      "y_formats": [
+        "Bps",
+        "Bps"
+      ],
+      "yaxes": [
+        {
+          "format": "Bps",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 18,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "kvm36",
+          "value": "kvm36"
+        },
+        "datasource": "Graphite",
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "compute",
+        "options": [],
+        "query": "collectd.*",
+        "refresh": 1,
+        "regex": "//",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allFormat": "glob",
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "Graphite",
+        "definition": "collectd.$compute.*",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "multiFormat": "glob",
+        "name": "uuid",
+        "options": [],
+        "query": "collectd.$compute.*",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allFormat": "glob",
+        "allValue": null,
+        "current": {
+          "tags": [],
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "Graphite",
+        "definition": "collectd.$compute.$uuid.*",
+        "hide": 0,
+        "includeAll": true,
+        "label": null,
+        "multi": false,
+        "multiFormat": "glob",
+        "name": "virt",
+        "options": [],
+        "query": "collectd.$compute.$uuid.*",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allFormat": "glob",
+        "allValue": null,
+        "current": {
+          "text": "if_octets-52_54_00_36_ba_55",
+          "value": "if_octets-52_54_00_36_ba_55"
+        },
+        "datasource": "Graphite",
+        "definition": "collectd.$compute.$uuid.$virt.*",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "multiFormat": "glob",
+        "name": "interface",
+        "options": [],
+        "query": "collectd.$compute.$uuid.$virt.*",
+        "refresh": 1,
+        "regex": "/^if_octets*/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allFormat": "glob",
+        "allValue": null,
+        "current": {
+          "text": "disk_octets-vda",
+          "value": "disk_octets-vda"
+        },
+        "datasource": "Graphite",
+        "definition": "collectd.$compute.$uuid.$virt.*",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "multiFormat": "glob",
+        "name": "diskrw",
+        "options": [],
+        "query": "collectd.$compute.$uuid.$virt.*",
+        "refresh": 1,
+        "regex": "/^disk_octet*/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allFormat": "glob",
+        "allValue": null,
+        "current": {
+          "text": "disk_ops-vda",
+          "value": "disk_ops-vda"
+        },
+        "datasource": "Graphite",
+        "definition": "collectd.$compute.$uuid.$virt.*",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "multiFormat": "glob",
+        "name": "diskops",
+        "options": [],
+        "query": "collectd.$compute.$uuid.$virt.*",
+        "refresh": 1,
+        "regex": "/^disk_ops/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "Graphite",
+        "definition": "",
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "vcpu",
+        "options": [],
+        "query": "collectd.$compute.$uuid.$virt.*",
+        "refresh": 1,
+        "regex": "/^virt_vcpu*/",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "VMs-cpu-util-ok",
+  "uid": "mqyja-omkqq",
+  "version": 14
+}
